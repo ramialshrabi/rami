@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAMI | منشئ محتوى</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+
+        :root {
+            --bg-color: #fcfcfc;
+            --text-color: #000000;
+            --grid-dots: rgba(0, 0, 0, 0.07);
+            --primary-yellow: #d4af13;
+            --tab-bar-bg: #e0e0e0;
+            --btn-gray: #dedede;
+            --input-field-bg: #dedede;
+            --form-card-yellow: #d4af13;
+            --video-card-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --grid-dots: rgba(255, 255, 255, 0.05);
+            --tab-bar-bg: #2a2a2a;
+            --btn-gray: #333333;
+            --input-field-bg: #2a2a2a;
+            --video-card-bg: #1e1e1e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            background-image: radial-gradient(var(--grid-dots) 15%, transparent 15%);
+            background-size: 18px 18px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .phone-wrapper {
+            width: 100%;
+            max-width: 415px;
+            min-height: 840px;
+            padding: 25px 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .toggle-theme-btn {
+            font-size: 22px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--text-color);
+        }
+
+        .toggle-lang-btn {
+            background-color: var(--btn-gray);
+            color: var(--text-color);
+            border: none;
+            padding: 5px 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-container {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .profile-avatar {
+            width: 115px;
+            height: 115px;
+            border-radius: 50%;
+            border: 2px solid var(--text-color);
+            object-fit: cover;
+            margin-bottom: 12px;
+            background-color: #ffffff;
+        }
+
+        .profile-name {
+            font-size: 34px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .profile-bio {
+            font-size: 18px;
+            opacity: 0.85;
+        }
+
+        .social-row-top {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0 25px 0;
+            font-size: 24px;
+        }
+
+        .social-row-top a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .main-tabs-bar {
+            width: 100%;
+            background-color: var(--tab-bar-bg);
+            border-radius: 12px;
+            display: flex;
+            padding: 4px;
+            margin-bottom: 25px;
+        }
+
+        .single-tab-trigger {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 11px 0;
+            font-size: 19px;
+            font-weight: bold;
+            color: var(--text-color);
+            cursor: pointer;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .single-tab-trigger.active-tab {
+            background-color: var(--form-card-yellow);
+            color: #000000;
+        }
+
+        .tab-content-panel {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .tab-content-panel.panel-active {
+            display: flex;
+        }
+
+        .dotted-section-divider {
+            width: 100%;
+            font-size: 14px;
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .dotted-section-divider::before {
+            content: ".........................................................................................";
+            letter-spacing: 2px;
+            display: block;
+            opacity: 0.35;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .dotted-section-divider span {
+            position: absolute;
+            top: -9px;
+            background-color: var(--bg-color);
+            padding: 0 12px;
+            font-weight: bold;
+        }
+        
+        html[dir="rtl"] .dotted-section-divider span { right: 10px; }
+        html[dir="ltr"] .dotted-section-divider span { left: 10px; }
+
+        .empty-videos-label {
+            font-size: 17px;
+            font-weight: bold;
+            margin: 25px 0;
+            text-align: center;
+            width: 100%;
+        }
+
+        /* تنسيق كروت الفيديوهات المجلوبة تلقائياً */
+        #youtubeVideosContainer {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .video-card-item {
+            width: 100%;
+            background-color: var(--video-card-bg);
+            border: 2px solid var(--text-color);
+            border-radius: 14px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .video-card-item:hover {
+            transform: scale(1.02);
+        }
+
+        .video-thumbnail-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--text-color);
+        }
+
+        .video-title-text {
+            padding: 12px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.4;
+            text-align: right;
+        }
+
+        html[dir="ltr"] .video-title-text {
+            text-align: left;
+        }
+
+        .suggest-intro-text {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 22px;
+            text-align: center;
+        }
+
+        .suggest-option-row {
+            width: 100%;
+            background-color: var(--btn-gray);
+            color: var(--text-color);
+            border: none;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .suggest-option-row i {
+            margin-left: 14px;
+            margin-right: 14px;
+            font-size: 20px;
+        }
+
+        .ads-contact-link {
+            width: 100%;
+            background-color: var(--btn-gray);
+            color: var(--text-color);
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 21px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 15px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .yellow-form-card {
+            width: 100%;
+            background-color: var(--form-card-yellow);
+            border-radius: 24px;
+            padding: 25px 20px;
+            display: none;
+            flex-direction: column;
+        }
+
+        .yellow-form-card.panel-active {
+            display: flex;
+        }
+
+        .custom-textarea {
+            width: 100%;
+            height: 135px;
+            background-color: var(--input-field-bg);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            padding: 15px;
+            font-size: 16px;
+            color: var(--text-color);
+            resize: none;
+            outline: none;
+            margin-bottom: 6px;
+            text-align: right;
+            transition: border-color 0.2s;
+        }
+
+        .custom-textarea.input-error {
+            border-color: #bd2130;
+        }
+
+        .character-live-counter {
+            font-size: 14px;
+            color: #000000;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: left;
+            direction: ltr;
+        }
+
+        .optional-fields-header {
+            font-size: 14px;
+            color: #000000;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+
+        .custom-input-field {
+            width: 100%;
+            background-color: var(--input-field-bg);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 15px;
+            color: var(--text-color);
+            outline: none;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .form-action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background-color: var(--input-field-bg);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 28px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @keyframes custom-shake {
+            0% { transform: translateX(0); }
+            15% { transform: translateX(-10px); }
+            30% { transform: translateX(10px); }
+            45% { transform: translateX(-10px); }
+            60% { transform: translateX(10px); }
+            75% { transform: translateX(-8px); }
+            90% { transform: translateX(8px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake-animation {
+            animation: custom-shake 0.5s ease-in-out;
+        }
+
+        .footer-container {
+            margin-top: auto;
+            width: 100%;
+            text-align: center;
+            padding-top: 35px;
+        }
+
+        .social-row-footer {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            font-size: 15px;
+            margin-bottom: 12px;
+            opacity: 0.85;
+        }
+
+        .social-row-footer a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .copyright-notice {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        html[dir="ltr"] .custom-textarea { text-align: left; }
+        html[dir="ltr"] .character-live-counter { text-align: right; }
+        html[dir="ltr"] .optional-fields-header { text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-wrapper">
+        
+        <div class="top-bar">
+            <button class="toggle-theme-btn" id="themeBtn" onclick="actionToggleTheme()">
+                <i class="fa-regular fa-moon"></i>
+            </button>
+            <button class="toggle-lang-btn" id="langBtn" onclick="actionToggleLanguage()">English</button>
+        </div>
+
+        <div class="profile-container">
+            <img src="InShot_20260513_143841804.png" alt="Rami Logo" class="profile-avatar">
+            <div class="profile-name" id="elmName">رامي</div>
+            <div class="profile-bio" id="elmBio">منشئ محتوى</div>
+        </div>
+
+        <div class="social-row-top">
+            <a href="https://youtube.com/@xramiv?si=PT0Is0CeqvnmyAKS" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://www.instagram.com/xramiv?igsh=MmxkaWdqbmk5d3Y5" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.snapchat.com/add/xramiv?share_id=Y4m0WSRfstk&locale=ar-YE" target="_blank"><i class="fa-brands fa-snapchat"></i></a>
+            <a href="https://tiktok.com/@xramiv" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.facebook.com/share/1D6eTKiWZP/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+        </div>
+
+        <div class="main-tabs-bar" id="navigationTabs">
+            <button class="single-tab-trigger active-tab" id="tabLinks" onclick="handleTabSwitch('links')">روابط</button>
+            <button class="single-tab-trigger" id="tabSuggest" onclick="handleTabSwitch('suggest')">يقترح</button>
+            <button class="single-tab-trigger" id="tabAdvertise" onclick="handleTabSwitch('advertise')">أعلن</button>
+        </div>
+
+        <div class="tab-content-panel panel-active" id="panelLinks">
+            <div class="dotted-section-divider"><span id="lblLatest">أحدث الفيديوهات</span></div>
+            
+            <div id="youtubeVideosContainer">
+                <div class="empty-videos-label" id="lblNoVideos">جاري تحميل الفيديوهات...</div>
+            </div>
+
+            <div class="dotted-section-divider"><span id="lblLinks">روابط</span></div>
+        </div>
+
+        <div class="tab-content-panel" id="panelSuggest">
+            <div class="suggest-intro-text" id="lblSuggestIntro">"شاركني أفكارك، ملاحظاتك، أو اقتراحاتك!"</div>
+            
+            <button class="suggest-option-row" onclick="handleOpenForm('فكرة محتوى', 'Content Idea')">
+                <i class="fa-solid fa-lightbulb"></i> <span class="row-txt">فكرة محتوى</span>
+            </button>
+            
+            <button class="suggest-option-row" onclick="handleOpenForm('شكوى', 'Complaint')">
+                <i class="fa-regular fa-file-lines"></i> <span class="row-txt">شكوى</span>
+            </button>
+            
+            <button class="suggest-option-row" onclick="handleOpenForm('اقتراح عام', 'General Suggestion')">
+                <i class="fa-regular fa-paper-plane"></i> <span class="row-txt">اقتراح عام</span>
+            </button>
+        </div>
+
+        <div class="tab-content-panel" id="panelAdvertise">
+            <a href="mailto:ramialshrabi@gmail.com?subject=Advertising Inquiry" class="ads-contact-link" id="lblAdsContact">تواصل للإعلانات</a>
+        </div>
+
+        <div class="yellow-form-card" id="formCardContainer">
+            <textarea class="custom-textarea" id="formMessageArea" placeholder="اكتب أفكارك هنا..."></textarea>
+            <div class="character-live-counter">0/20000</div>
+            
+            <div class="optional-fields-header" id="lblOptional">معلومات الاتصال (اختياري)</div>
+            
+            <input type="text" class="custom-input-field" id="formInputName" placeholder="ما اسمك؟">
+            <input type="email" class="custom-input-field" id="formInputEmail" placeholder="ما هو بريدك الإلكتروني؟">
+            <input type="tel" class="custom-input-field" id="formInputPhone" placeholder="رقم الهاتف؟">
+            
+            <div class="form-action-buttons">
+                <button type="button" class="action-btn" id="btnSubmit" onclick="handleFormSubmission()">تقديم</button>
+                <button type="button" class="action-btn" id="btnBack" onclick="handleCloseForm()">رجوع</button>
+            </div>
+        </div>
+
+        <div class="footer-container" id="globalFooter">
+            <div class="social-row-footer">
+                <a href="https://youtube.com/@ramlect?si=j8_AhbbQpzTOIy7j" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://www.instagram.com/ramlect?igsh=cjJjNGJwZDUycHI1" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.snapchat.com/add/ramlect?share_id=_nwpu1ZkK78&locale=ar-YE" target="_blank"><i class="fa-brands fa-snapchat"></i></a>
+                <a href="https://www.facebook.com/share/1Cvr99jYj2/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://tiktok.com/@ramlect" target="_blank"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://x.com/RamlectCo" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+            <div class="copyright-notice" id="lblCopyright">جميع الحقوق محفوظة © 2026 لـ ramlect</div>
+        </div>
+
+    </div>
+
+    <script>
+        let stateLang = 'ar';
+        let stateTab = 'links';
+        // تطبيق اللغة العربية فور التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            document.documentElement.setAttribute('dir', 'rtl');
+            document.documentElement.setAttribute('lang', 'ar');
+            document.getElementById('langBtn').innerText = 'English';
+        });
+        let selectedTypeAr = '';
+        let selectedTypeEn = '';
+
+        // ضع رابط الـ Web App (المستخرج من Google Apps Script والمنتهي بـ /exec) هنا بالأسفل:
+        const youtubeScriptUrl = "ضع_رابط_الـ_exec_الخاص_بك_هنا";
+
+        const dictionary = {
+            ar: {
+                name: "رامي", bio: "منشئ محتوى",
+                tabLinks: "روابط", tabSuggest: "يقترح", tabAdvertise: "أعلن",
+                lblLatest: "أحدث الفيديوهات", lblNoVideos: "لا توجد فيديوهات", lblLinks: "روابط",
+                suggestIntro: '"شاركني أفكارك، ملاحظاتك، أو اقتراحاتك!"',
+                optIdea: "فكرة محتوى", optComplaint: "شكوى", optGeneral: "اقتراح عام",
+                adsContact: "تواصل للإعلانات", copyright: "جميع الحقوق محفوظة © 2026 لـ ramlect",
+                placeholderTextarea: "اكتب أفكارك هنا...", lblOptional: "معلومات الاتصال (اختياري)",
+                phName: "ما اسمك؟", phEmail: "ما هو بريدك الإلكتروني؟", phPhone: "رقم الهاتف؟",
+                btnSubmit: "تقديم", btnBack: "رجوع", langBtnText: "English"
+            },
+            en: {
+                name: "RAMI", bio: "CONTENT CREATOR",
+                tabLinks: "Links", tabSuggest: "Suggest", tabAdvertise: "Advertise",
+                lblLatest: "LATEST VIDEOS", lblNoVideos: "No videos found", lblLinks: "LINKS",
+                suggestIntro: '"Share your thoughts, notes, or suggestions!"',
+                optIdea: "Content Idea", optComplaint: "Complaint", optGeneral: "General Suggestion",
+                adsContact: "Contact for Ads", copyright: "© 2026 ramlect. All rights reserved.",
+                placeholderTextarea: "Write your thoughts here...", lblOptional: "Contact Information (Optional)",
+                phName: "What is your name?", phEmail: "What is your email?", phPhone: "Phone number?",
+                btnSubmit: "Submit", btnBack: "Back", langBtnText: "العربي"
+            }
+        };
+
+        function handleTabSwitch(tabName) {
+            stateTab = tabName;
+            document.getElementById('formCardContainer').classList.remove('panel-active');
+            document.getElementById('navigationTabs').style.display = 'flex';
+            document.getElementById('globalFooter').style.display = 'block';
+
+            document.getElementById('panelLinks').classList.remove('panel-active');
+            document.getElementById('panelSuggest').classList.remove('panel-active');
+            document.getElementById('panelAdvertise').classList.remove('panel-active');
+
+            document.getElementById('tabLinks').classList.remove('active-tab');
+            document.getElementById('tabSuggest').classList.remove('active-tab');
+            document.getElementById('tabAdvertise').classList.remove('active-tab');
+
+            if(tabName === 'links') {
+                document.getElementById('panelLinks').classList.add('panel-active');
+                document.getElementById('tabLinks').classList.add('active-tab');
+            } else if(tabName === 'suggest') {
+                document.getElementById('panelSuggest').classList.add('panel-active');
+                document.getElementById('tabSuggest').classList.add('active-tab');
+            } else if(tabName === 'advertise') {
+                document.getElementById('panelAdvertise').classList.add('panel-active');
+                document.getElementById('tabAdvertise').classList.add('active-tab');
+            }
+        }
+
+        function handleOpenForm(typeAr, typeEn) {
+            selectedTypeAr = typeAr;
+            selectedTypeEn = typeEn;
+            document.getElementById('panelSuggest').classList.remove('panel-active');
+            document.getElementById('navigationTabs').style.display = 'none';
+            document.getElementById('globalFooter').style.display = 'none';
+            document.getElementById('formCardContainer').classList.add('panel-active');
+            document.getElementById('formMessageArea').focus();
+        }
+
+        function handleCloseForm() {
+            const txtArea = document.getElementById('formMessageArea');
+            txtArea.classList.remove('input-error');
+            txtArea.value = '';
+            document.querySelector('.character-live-counter').innerText = '0/20000';
+            document.getElementById('formCardContainer').classList.remove('panel-active');
+            document.getElementById('navigationTabs').style.display = 'flex';
+            document.getElementById('globalFooter').style.display = 'block';
+            document.getElementById('panelSuggest').classList.add('panel-active');
+        }
+
+        function handleFormSubmission() {
+            const messageInput = document.getElementById('formMessageArea');
+            const messageValue = messageInput.value.trim();
+            const formContainer = document.getElementById('formCardContainer');
+
+            if (!messageValue) {
+                messageInput.classList.add('input-error');
+                formContainer.classList.add('shake-animation');
+                setTimeout(() => { formContainer.classList.remove('shake-animation'); }, 500);
+                return;
+            }
+
+            const nameVal = document.getElementById('formInputName').value.trim() || 'لم يذكر';
+            const emailVal = document.getElementById('formInputEmail').value.trim() || 'لم يذكر';
+            const phoneVal = document.getElementById('formInputPhone').value.trim() || 'لم يذكر';
+            const emailSubject = encodeURIComponent(`اقتراح جديد: ${selectedTypeAr}`);
+            
+            let emailBody = `نوع الطلب: ${selectedTypeAr}\nالرسالة:\n${messageValue}\n\nالاسم: ${nameVal}\nالبريد: ${emailVal}\nالهاتف: ${phoneVal}`;
+            window.location.href = `mailto:ramialshrabi@gmail.com?subject=${emailSubject}&body=${encodeURIComponent(emailBody)}`;
+        }
+
+        function actionToggleLanguage() {
+            stateLang = stateLang === 'ar' ? 'en' : 'ar';
+            const rootHtml = document.documentElement;
+            rootHtml.setAttribute('dir', stateLang === 'ar' ? 'rtl' : 'ltr');
+            rootHtml.setAttribute('lang', stateLang);
+
+            const currentLabels = dictionary[stateLang];
+            document.getElementById('langBtn').innerText = currentLabels.langBtnText;
+            document.getElementById('elmName').innerText = currentLabels.name;
+            document.getElementById('elmBio').innerText = currentLabels.bio;
+            document.getElementById('tabLinks').innerText = currentLabels.tabLinks;
+            document.getElementById('tabSuggest').innerText = currentLabels.tabSuggest;
+            document.getElementById('tabAdvertise').innerText = currentLabels.tabAdvertise;
+            document.getElementById('lblLatest').innerText = currentLabels.lblLatest;
+            document.getElementById('lblLinks').innerText = currentLabels.lblLinks;
+            document.getElementById('lblSuggestIntro').innerText = currentLabels.suggestIntro;
+            document.getElementById('lblAdsContact').innerText = currentLabels.adsContact;
+            document.getElementById('lblCopyright').innerText = currentLabels.copyright;
+        }
+
+        function actionToggleTheme() {
+            const activeTheme = document.documentElement.getAttribute('data-theme');
+            const targetIcon = document.getElementById('themeBtn').querySelector('i');
+            if (activeTheme === 'dark') {
+                document.documentElement.removeAttribute('data-theme');
+                targetIcon.className = 'fa-regular fa-moon';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                targetIcon.className = 'fa-solid fa-sun';
+            }
+        }
+
+        document.getElementById('formMessageArea').addEventListener('input', function() {
+            document.querySelector('.character-live-counter').innerText = `${this.value.length}/20000`;
+        });
+
+        // دالة جلب الفيديوهات تلقائياً من رابط السكريبت الخاص بك
+        async function fetchYouTubeVideos() {
+            const container = document.getElementById('youtubeVideosContainer');
+            if (!youtubeScriptUrl || youtubeScriptUrl.includes("ضع_رابط")) {
+                container.innerHTML = `<div class="empty-videos-label">${dictionary[stateLang].lblNoVideos}</div>`;
+                return;
+            }
+
+            try {
+                const response = await fetch(youtubeScriptUrl);
+                const videos = await response.json();
+
+                if (videos && videos.length > 0) {
+                    container.innerHTML = ''; // تفريغ حقل التحميل
+                    videos.forEach(video => {
+                        const card = document.createElement('a');
+                        card.className = 'video-card-item';
+                        card.href = video.link || video.videoUrl || '#';
+                        card.target = '_blank';
+
+                        card.innerHTML = `
+                            <img src="${video.thumbnail || video.imageUrl}" class="video-thumbnail-img" alt="${video.title}">
+                            <div class="video-title-text">${video.title}</div>
+                        `;
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.innerHTML = `<div class="empty-videos-label">${dictionary[stateLang].lblNoVideos}</div>`;
+                }
+            } catch (error) {
+                console.error("Error fetching videos:", error);
+                container.innerHTML = `<div class="empty-videos-label">${dictionary[stateLang].lblNoVideos}</div>`;
+            }
+        }
+
+        // تشغيل الجلب التلقائي للفيديوهات عند فتح الصفحة فوراً
+        window.addEventListener('DOMContentLoaded', fetchYouTubeVideos);
+    </script>
+</body>
+</html>
